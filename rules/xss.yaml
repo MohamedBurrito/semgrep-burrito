@@ -1,0 +1,14 @@
+rules:
+  - id: unsanitized-echo
+    languages: [php]
+    message: "Possible XSS: unsanitized user input echoed directly."
+    severity: WARNING
+    patterns:
+      - pattern-either:
+          - pattern: echo $_GET[$KEY];
+          - pattern: echo $_POST[$KEY];
+          - pattern: echo $_REQUEST[$KEY];
+    metadata:
+      cwe: "CWE-79"
+      description: "Detects echo of superglobal input without HTML encoding or sanitization."
+      author: "mohamed-nero"

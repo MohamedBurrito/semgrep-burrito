@@ -1,0 +1,21 @@
+rules:
+  - id: insecure-sql-concat
+    patterns:
+      - pattern: $Q = "...$VAR...";
+    message: |
+      Possible SQL Injection: SQL query contains string concatenation.
+    severity: ERROR
+    languages: [php]
+    metadata:
+      category: security
+      cwe: "CWE-89: SQL Injection"
+      author: mohamed-nero
+      description: Detect unsafe SQL queries formed via string interpolation.
+
+    example:
+      # positive example
+      - |
+        $query = "SELECT * FROM users WHERE username='$user'";
+      # negative example
+      - |
+        $stmt = $db->prepare("SELECT * FROM users WHERE username=?");
