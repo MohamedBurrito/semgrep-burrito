@@ -1,0 +1,31 @@
+version: "3.3"
+
+services:
+  web:
+    image: php:7.4-apache
+    container_name: mutillidae-web
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - db
+    command: >
+      bash -c "docker-php-ext-install mysqli &&
+               apache2-foreground"
+
+  db:
+    image: mysql:5.7
+    container_name: mutillidae-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mutillidae
+      MYSQL_USER: mutilliuser
+      MYSQL_PASSWORD: mutillipass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:

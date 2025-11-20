@@ -1,123 +1,81 @@
-# Semgrep Security Rules – Burrito
+# OWASP Mutillidae II
 
-This branch contains custom Semgrep rules created to detect security vulnerabilities inside the Mutillidae codebase.  
-The focus is on two main vulnerability classes:
+OWASP Mutillidae II is a free, open-source, deliberately vulnerable web application designed for web-security enthusiasts. It serves as a target for learning and practicing web security skills. Mutillidae can be easily installed on Linux and Windows systems using LAMP, WAMP, and XAMMP stacks. Additionally, it comes pre-installed on SamuraiWTF and OWASP BWA, and the existing version can be updated on these platforms. With dozens of vulnerabilities and hints to guide the user, Mutillidae provides an accessible web hacking environment suitable for labs, security enthusiasts, classrooms, CTFs, and vulnerability assessment tool targets. It has been widely used in graduate security courses, corporate web security training, and as an assessment target for vulnerability assessment software. OWASP Mutillidae II provides a comprehensive platform for learning and practicing web security techniques in a controlled environment.
 
-- Cross-Site Scripting (XSS)
-- SQL Injection (SQLi)
+## Project Announcements
 
-Both issues were identified during code review and reproduced inside the Mutillidae environment.
+Stay updated with project announcements on X: [webpwnized](https://x.com/webpwnized)
 
----
+## Tutorials
 
-## Project Structure
+Explore our tutorials on YouTube: [webpwnized YouTube channel](https://www.youtube.com/user/webpwnized)
 
-```
-semgrep-burrito/
-│
-├── rules/
-│   ├── xss.yaml
-│   └── sql.yaml
-│
-├── tests/
-│   ├── xss-positive.php
-│   └── xss-negative.php
-│
-└── semgrep.yml
-```
+## Installation Guides
 
----
+### Location of source code
 
-## 1. XSS Detection Rule
+Note carefully that the source code has moved to the ***src*** project directory. **Be careful to adjust accordingly.**
 
-File: `rules/xss.yaml`  
-This rule detects unsanitized user input being directly echoed in PHP code.
+### Standard Installation - DockerHub
 
-### Logic
-It looks for patterns where PHP echoes `$_REQUEST`, `$_GET`, or `$_POST` directly without sanitization.
+- [How to Run Mutillidae from DockerHub Images](https://www.youtube.com/watch?v=c1nOSp3nagw)
 
-Example vulnerable code:
-```php
-<?php echo $_REQUEST["page"]; ?>
-```
+### Alternative Installation - Docker
 
----
+- [How to Install Docker on Ubuntu](https://www.youtube.com/watch?v=Y_2JVREtDFk)
+- [How to Run Mutillidae on Docker](https://www.youtube.com/watch?v=9RH4l8ff-yg)
 
-## 2. SQL Injection Detection Rule
+### Alternative Installation - Google Cloud
 
-File: `rules/sql.yaml`  
-This rule identifies SQL queries built using unsafe string concatenation.
+- [How to Run Mutillidae on Google Kubernetes Engine (GKE)](https://www.youtube.com/watch?v=uU1eEjrp93c)
 
-### Logic
-It detects queries like:
-```php
-$query = "SELECT * FROM users WHERE id=" . $_GET['id'];
-```
+### Legacy Installation - LAMP Stack
 
----
+If you have a LAMP stack set up already, you can skip directly to installing Mutillidae. Check out our [comprehensive installation guide](README-INSTALLATION.md) for detailed instructions. Watch the video tutorial: [How to Install Mutillidae on LAMP Stack](https://www.youtube.com/watch?v=TcgeRab7ayM)
 
-## Test Cases
+## Usage
 
-Tests are stored in the `tests` directory to ensure rules are accurate.
+Explore a large number of video tutorials available on the [webpwnized YouTube channel](https://www.youtube.com/playlist?list=PLZOToVAK85MrsyNmNp0yyUTBXqKRTh623) for guidance on using Mutillidae.
 
-### Positive Example (should be flagged)
-`tests/xss-positive.php`:
-```php
-<?php echo $_REQUEST["page"]; ?>
-```
+## Key Features
 
-### Negative Example (should NOT be flagged)
-`tests/xss-negative.php`:
-```php
-<?php echo htmlspecialchars($_GET["page"]); ?>
-```
+- Contains over 40 vulnerabilities and challenges, covering each of the OWASP Top Ten from 2007 to 2017
+- Mutillidae is actually vulnerable, eliminating the need for users to enter a "magic" statement
+- Easy installation on Linux or Windows *AMP stacks, including XAMPP, WAMP, and LAMP
+- Preinstalled on Rapid7 Metasploitable 2, Samurai Web Testing Framework (WTF), and OWASP Broken Web Apps (BWA)
+- One-click system restoration to default settings with the "Setup" button
+- Users can switch between secure and insecure modes
+- Widely used in graduate security courses, corporate web security training, and as an assessment target for vulnerability assessment software
+- Regularly updated to maintain relevance and effectiveness
 
----
+## Directory Structure
 
-## Running Semgrep
+Below is the updated directory structure of the project along with brief descriptions:
 
-To scan the Mutillidae codebase using these custom rules:
+### Root Directory
+- `CHANGELOG.md` - Project change log.
+- `CONTRIBUTING.md` - Contribution guidelines.
+- `LICENSE` - Project license.
+- `README-INSTALLATION.md` - Installation instructions.
+- `README.md` - Main README file.
+- `SECURITY.md` - Security guidelines.
 
-```bash
-semgrep --config semgrep.yml .
-```
+### Source Directory: `src`
+- **`ajax`** - Contains files related to AJAX functionality.
+- **`classes`** - PHP class files for handling various tasks (e.g., logging, token management, database operations).
+- **`data`** - Data files, such as XML data sources.
+- **`documentation`** - Documentation files including installation guides and usage instructions.
+- **`images`** - All image assets used in the application (e.g., icons, gritter assets).
+- **`includes`** - Reusable PHP files (e.g., templates, configuration files).
+- **`javascript`** - JavaScript libraries, custom scripts, and initializers for front-end functionality.
+- **`labs`** - Files for security testing, offering challenges such as SQL injection, XSS, and file inclusions.
+- **`passwords`** - Password-related files (e.g., account data).
+- **`styles`** - CSS stylesheets defining the look and feel of the application.
+- **`webservices`** - Web services for REST and SOAP APIs.
+  - **`includes`** - Reusable components for web services.
+  - **`rest`** - REST API files and related documentation.
+  - **`soap`** - SOAP service files, including libraries and documentation.
+    - **`soap/lib`** - Library files specifically for SOAP service integration.
 
----
-
-## Expected Output
-
-- XSS rule flags unsafe echoes such as: `echo $_REQUEST[…]`
-- SQL Injection rule flags unsafe string concatenation inside SQL queries
-
-The results will appear under:
-
-```
-rules.unsanitized-echo
-rules.insecure-sql-concat
-```
-
----
-
-## Limitations
-
-- Simple patterns may miss multi-line SQL query construction.
-- XSS rule only detects direct `echo` of raw input.
-- Rules may require tuning depending on coding structure.
-
----
-
-## Author
-
-**Burrito**  
-Cybersecurity Student – Semgrep Lab
-
----
-
-## Notes
-
-This branch is prepared for Lab 4 deliverables and contains:
-- Semgrep custom rules  
-- Test cases  
-- Config file  
-- Clean commit history
-
+### Additional Files and Directories
+- `version` - Contains versioning information for the project.
